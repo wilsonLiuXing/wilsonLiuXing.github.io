@@ -74,6 +74,38 @@ if (arg.msgid == (uint)MAVLink.MAVLINK_MSG_ID.STATUSTEXT)
 
 > 这里当响应成功/失败指令后，停止继续校准。
   
+# 水平校准
+<font colot="red">MissionPlanner\GCSViews\ConfigurationView\ConfigAccelerometerCalibration.cs</font>        
+
+```C#
+private void BUT_level_Click(object sender, EventArgs e)
+{
+    try
+    {
+        Log.Info("Sending level command (mavlink 1.0)");
+        if (MainV2.comPort.doCommand((byte) MainV2.comPort.sysidcurrent, (byte) MainV2.comPort.compidcurrent,
+            MAVLink.MAV_CMD.PREFLIGHT_CALIBRATION, 0, 0, 0, 0, 2, 0, 0))
+        {
+            BUT_level.Text = Strings.Completed;
+        }
+        else
+        {
+            CustomMessageBox.Show(Strings.CommandFailed, Strings.ERROR);
+        }
+    }
+    catch (Exception ex)
+    {
+        Log.Error("Exception on level", ex);
+        CustomMessageBox.Show("Failed to level", Strings.ERROR);
+    }
+}
+```
+| 参数名         | 类型       | 描述                                   |
+|----------------|------------|----------------------------------------|
+| MAVLink.MAV_CMD.PREFLIGHT_CALIBRATION   | `int`     | 241     |
+
+> 水平校准只发一条命令，直接返回执行成功还是执行失败。 
+
 
 # 指南针
 

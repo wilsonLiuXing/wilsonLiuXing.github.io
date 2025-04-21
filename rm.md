@@ -2,7 +2,47 @@
  
 <font color="red">MissionPlanner\GCSViews\ConfigurationView\ConfigAccelerometerCalibration.cs: 39</font>
 
-> 前置条件，在_incalibrate(校准中)状态下执行。
+> 前置条件，在_incalibrate(校准中)状态下执行。  
+
+1、开始校准
+<details>  
+<summary>点击查看代码</summary>  
+
+```C#
+ try
+ {
+     count = 0;
+
+     Log.Info("Sending accel command (mavlink 1.0)");
+
+     if (MainV2.comPort.doCommand((byte) MainV2.comPort.sysidcurrent, (byte) MainV2.comPort.compidcurrent,
+         MAVLink.MAV_CMD.PREFLIGHT_CALIBRATION, 0, 0, 0, 0, 1, 0, 0))
+     {
+         _incalibrate = true;
+
+         sub1 = MainV2.comPort.SubscribeToPacketType(MAVLink.MAVLINK_MSG_ID.STATUSTEXT, receivedPacket, (byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent);
+         sub2 = MainV2.comPort.SubscribeToPacketType(MAVLink.MAVLINK_MSG_ID.COMMAND_LONG, receivedPacket, (byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent);
+
+         BUT_calib_accell.Text = Strings.Click_when_Done;
+     }
+     else
+     {
+         CustomMessageBox.Show(Strings.CommandFailed, Strings.ERROR);
+     }
+ }
+ catch (Exception ex)
+ {
+     _incalibrate = false;
+     Log.Error("Exception on level", ex);
+     CustomMessageBox.Show("Failed to level", Strings.ERROR);
+ }
+```
+</details>  
+
+
+| 参数名   | 对应值 | 说明|  
+|----------|-------|-------|
+| MAVLink.MAV_CMD.PREFLIGHT_CALIBRATION   | 241  | |  
 
 ```C#
 MainV2.comPort.sendPacket(new MAVLink.mavlink_command_long_t { 
@@ -16,7 +56,7 @@ MainV2.comPort.sendPacket(new MAVLink.mavlink_command_long_t {
 
 | 参数名   | 对应值 |
 |----------|-------|
-| param1   | ACCELCAL_VEHICLE_POS     |
+| param1   | `ACCELCAL_VEHICLE` 对应值，祥见下方     |
 | command  | 42429 |
 | sysidcurrent    | 1    |
 | compidcurrent   | 1 |

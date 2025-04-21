@@ -352,8 +352,10 @@ if (!MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.com
 | 参数名         | 类型       | 说明                                   |  
 |----------------|------------|----------------------------------------|  
 | paramname   | `String`     | `"COMPASS_CAL_FIT"`      |
-| value   | `double`     | 选择的值  |  
-3、下拉数据参数
+| value   | `double`     | 选择的值  |    
+
+3、下拉数据参数  
+
 <font color="red">MissionPlanner\ExtLibs\wasm\wwwroot\ParameterMetaDataBackup.xml： 1943-1950</font>  
 ```xml
 <COMPASS_CAL_FIT>

@@ -156,7 +156,7 @@ if (arg.msgid == (uint)MAVLink.MAVLINK_MSG_ID.STATUSTEXT)
 |----------------|------------|----------------------------------------|
 | sysidcurrent   | `byte`     | 系统 ID，固定值     |
 | compidcurrent  | `byte`     | 组件 ID，固定值     |
-| paramname       | `string`   |`"COMPASS_PRIO3_ID"`：表示第一行，`"COMPASS_PRIO2_ID"`：表示第二行， `"COMPASS_PRIO3_ID"`：表示第三行|
+| paramname       | `string`   |`"COMPASS_PRIO1_ID"`：表示第一行，`"COMPASS_PRIO2_ID"`：表示第二行， `"COMPASS_PRIO3_ID"`：表示第三行|
 | value         | `int`      | 对应的 `DevId`     |
 
 > 当只有一个指南针时，`COMPASS_PRIO2_ID`、`COMPASS_PRIO3_ID`的 `value`值要设置为 `0`。
@@ -174,6 +174,8 @@ if (arg.msgid == (uint)MAVLink.MAVLINK_MSG_ID.STATUSTEXT)
 | compidcurrent  | `byte`     | 组件 ID，固定值     |
 | ParamName       | `string`   |`"COMPASS_USE"`：表示第一个指南针，`"COMPASS_USE2"`：表示第二个指南针， `"COMPASS_USE3"`：表示第三个指南针|
 | OnValue         | `int`      | 对应的开关状态，`OffValue = 0D`,`OnValue = 1D`    |
+
+> 注意：`"COMPASS_USE"` 并没有 `1` , MissionPlanner中就是如此定义的。
 
 ## 三、安装方向(地面站没有下拉选项，具体无法debug)
 >目前下拉框是禁用状态，没有响应时间。  

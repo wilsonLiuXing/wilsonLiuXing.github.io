@@ -144,7 +144,7 @@ private void BUT_level_Click(object sender, EventArgs e)
 |----------------|------------|----------------------------------------|
 | MAVLink.MAV_CMD.PREFLIGHT_CALIBRATION   | `int`     | 241     |
 
-> 水平校准只发一条命令，直接返回执行成功还是执行失败。 
+> 水平校准只发一条命令，直接返回执行成功还是执行失败。 <strong>地面站测试，大概过了几秒返回 `false` </strong>
 
 
 # 指南针

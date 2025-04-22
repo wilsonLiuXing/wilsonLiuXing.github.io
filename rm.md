@@ -151,9 +151,9 @@ private void BUT_level_Click(object sender, EventArgs e)
 
 <font color="red">MissionPlanner\GCSViews\ConfigurationView\ConfigHWCompass2.cs</font>
 ## 获取参数命令
-1、获取设备`DEV_ID`: `"COMPASS_DEV_ID"`、`"COMPASS_DEV_ID2"`、`"COMPASS_DEV_ID3"`。  
-2、获取设备是否外置`externa`: `"COMPASS_EXTERNAL"`、`"COMPASS_EXTERN2"`、`"COMPASS_EXTERN3"`  
-2、获取设备方向`oriention`: `"COMPASS_ORIENT"`、`"COMPASS_ORIENT2"`、`"COMPASS_ORIENT3"`
+1、获取设备 `DEV_ID` :  `"COMPASS_DEV_ID"`、`"COMPASS_DEV_ID2"`、`"COMPASS_DEV_ID3"`。  
+2、获取设备是否外置 `externa` :  `"COMPASS_EXTERNAL"`、`"COMPASS_EXTERN2"`、`"COMPASS_EXTERN3"`  
+2、获取设备方向 `oriention` :  `"COMPASS_ORIENT"`、`"COMPASS_ORIENT2"`、`"COMPASS_ORIENT3"`
 
 ## 一、排序
 <details>  

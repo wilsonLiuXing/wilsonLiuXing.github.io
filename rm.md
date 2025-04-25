@@ -155,6 +155,16 @@ private void BUT_level_Click(object sender, EventArgs e)
 2、获取设备是否外置 `externa` :  `"COMPASS_EXTERNAL"`、`"COMPASS_EXTERN2"`、`"COMPASS_EXTERN3"`  
 2、获取设备方向 `oriention` :  `"COMPASS_ORIENT"`、`"COMPASS_ORIENT2"`、`"COMPASS_ORIENT3"`
 
+## 解析参数
+> 在罗盘中，`Bus`、`BusType`、`Address`、`DevType`参数，是通过`DEV_ID`进行拆解得到。
+<font color="red">MissionPlanner\ExtLibs\Utilities\Device.cs</font>  
+```C#
+public BusType bus_type { get { return (BusType)(devid & 0x7); } } // : 3;
+public byte bus { get { return (byte)((devid >> 3) & 0x1f); } } //: 5;    // which instance of the bus type
+public byte address { get { return (byte)((devid >> 8) & 0xff); } } // address on the bus (eg. I2C address)
+public byte devtype { get { return (byte)((devid >> 16) & 0xff); } }
+````
+
 ## 一、排序
 <details>  
 <summary>点击展开代码</summary>  

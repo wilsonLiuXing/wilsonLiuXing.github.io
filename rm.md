@@ -465,3 +465,22 @@ if (!MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.com
     </COMPASS_CAL_FIT>
     <COMPASS_DEC>
 ```
+
+
+// calc crc
+ushort crc = MavlinkCRC.crc_calculate(buffer, buffer.Length - 2);
+
+// calc extra bit of crc for mavlink 1.0+
+if (message.header == MAVLINK_STX || message.header == MAVLINK_STX_MAVLINK1)
+{
+    crc = MavlinkCRC.crc_accumulate(MAVLINK_MESSAGE_INFOS.GetMessageInfo(message.msgid).crc, crc);
+}
+
+// check crc
+if ((message.crc16 >> 8) != (crc >> 8) ||
+          (message.crc16 & 0xff) != (crc & 0xff))
+{
+    badCRC++;
+    // crc fail
+    return null;
+}

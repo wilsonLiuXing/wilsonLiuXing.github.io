@@ -466,21 +466,17 @@ if (!MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.com
     <COMPASS_DEC>
 ```
 
+# 设置安装飞控方向  
 
-// calc crc
-ushort crc = MavlinkCRC.crc_calculate(buffer, buffer.Length - 2);
-
-// calc extra bit of crc for mavlink 1.0+
-if (message.header == MAVLINK_STX || message.header == MAVLINK_STX_MAVLINK1)
-{
-    crc = MavlinkCRC.crc_accumulate(MAVLINK_MESSAGE_INFOS.GetMessageInfo(message.msgid).crc, crc);
-}
-
-// check crc
-if ((message.crc16 >> 8) != (crc >> 8) ||
-          (message.crc16 & 0xff) != (crc & 0xff))
-{
-    badCRC++;
-    // crc fail
-    return null;
-}
+## 一、参数
+```xml
+ <AHRS_ORIENTATION>
+   <DisplayName>Board Orientation</DisplayName>
+   <Description>Overall board orientation relative to the standard orientation for the board type. This rotates the IMU and compass readings to allow the board to be oriented in your vehicle at any 90 or 45 degree angle. This option takes affect on next boot. After changing you will need to re-level your vehicle.</Description>
+   <Values>0:None,1:Yaw45,2:Yaw90,3:Yaw135,4:Yaw180,5:Yaw225,6:Yaw270,7:Yaw315,8:Roll180,9:Roll180Yaw45,10:Roll180Yaw90,11:Roll180Yaw135,12:Pitch180,13:Roll180Yaw225,14:Roll180Yaw270,15:Roll180Yaw315,16:Roll90,17:Roll90Yaw45,18:Roll90Yaw90,19:Roll90Yaw135,20:Roll270,21:Roll270Yaw45,22:Roll270Yaw90,23:Roll270Yaw135,24:Pitch90,25:Pitch270,26:Pitch180Yaw90,27:Pitch180Yaw270,28:Roll90Pitch90,29:Roll180Pitch90,30:Roll270Pitch90,31:Roll90Pitch180,32:Roll270Pitch180,33:Roll90Pitch270,34:Roll180Pitch270,35:Roll270Pitch270,36:Roll90Pitch180Yaw90,37:Roll90Yaw270,38:Yaw293Pitch68Roll180,39:Pitch315,40:Roll90Pitch315,100:Custom</Values>
+   <User>Advanced</User>
+ </AHRS_ORIENTATION>
+```
+## 二、设置指令
+```C#
+```

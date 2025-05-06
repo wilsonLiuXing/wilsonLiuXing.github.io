@@ -468,6 +468,8 @@ if (!MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.com
 
 # 设置安装飞控方向  
 
+<font color="red">MissionPlanner\GCSViews\ConfigurationView\ConfigRawParams.cs</font>
+
 ## 一、参数
 ```xml
  <AHRS_ORIENTATION>
@@ -477,6 +479,79 @@ if (!MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.com
    <User>Advanced</User>
  </AHRS_ORIENTATION>
 ```
-## 二、设置指令
-```C#
+## 二、设置指令  
+<details>
+ <summary>点击查看代码</summary>  
+ 
+ ```C#
+private void BUT_writePIDS_Click(object sender, EventArgs e)
+{
+    if (Common.MessageShowAgain("Write Raw Params", "Are you Sure?") != DialogResult.OK)
+        return;
+
+    // sort with enable at the bottom - this ensures params are set before the function is disabled
+    // _changes为Map,key为“命令字段”，value为修改值。
+    var temp = _changes.Keys.Cast<string>().ToList();
+
+    temp.SortENABLE();
+
+    bool enable = temp.Any(a => a.EndsWith("_ENABLE"));
+
+    int error = 0;
+    bool reboot = false;
+
+    foreach (string value in temp)
+    {
+        try
+        {
+            if (MainV2.comPort.BaseStream == null || !MainV2.comPort.BaseStream.IsOpen)
+            {
+                CustomMessageBox.Show("Your are not connected", Strings.ERROR);
+                return;
+            }
+
+            MainV2.comPort.setParam(value, (double)_changes[value]);
+            //check if reboot required
+            if (ParameterMetaDataRepository.GetParameterRebootRequired(value, MainV2.comPort.MAV.cs.firmware.ToString()))
+            {
+                reboot = true;
+            }
+            try
+            {
+                // set control as well
+                var textControls = Controls.Find(value, true);
+                if (textControls.Length > 0)
+                {
+                    ThemeManager.ApplyThemeTo(textControls[0]);
+                }
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                // set param table as well
+                foreach (DataGridViewRow row in Params.Rows)
+                {
+                    if (row.Cells[Command.Index].Value.ToString() == value)
+                    {
+                        row.Cells[Value.Index].Style.BackColor = ThemeManager.ControlBGColor;
+                        _changes.Remove(value);
+                        break;
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+        catch
+        {
+            error++;
+            CustomMessageBox.Show("Set " + value + " Failed");
+        }
+    }
 ```
+</details>
+

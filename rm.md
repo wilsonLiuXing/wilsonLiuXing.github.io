@@ -804,3 +804,162 @@ private void BUT_Calibrateradio_Click(object sender, EventArgs e)
 ```
 </details>
 
+# 通道功能  
+<font color="red">MissionPlanner\GCSViews\ConfigurationView\ConfigUserDefined.cs</font>
+## 一、参数
+
+<details>
+<summary>点击展开查看通道功能表格</summary>
+
+| 编号 | 功能名称                     |
+|------|------------------------------|
+| 0    | Do Nothing                  |
+| 2    | FLIP Mode                   |
+| 3    | Simple Mode                 |
+| 4    | RTL                         |
+| 5    | Save Trim                   |
+| 7    | Save WP                     |
+| 9    | Camera Trigger              |
+| 10   | RangeFinder Enable          |
+| 11   | Fence Enable                |
+| 13   | Super Simple Mode           |
+| 14   | Acro Trainer                |
+| 15   | Sprayer Enable              |
+| 16   | AUTO Mode                   |
+| 17   | AUTOTUNE Mode               |
+| 18   | LAND Mode                   |
+| 19   | Gripper Release             |
+| 21   | Parachute Enable            |
+| 22   | Parachute Release           |
+| 23   | Parachute 3pos              |
+| 24   | Auto Mission Reset          |
+| 25   | AttCon Feed Forward         |
+| 26   | AttCon Accel Limits         |
+| 27   | Retract Mount1              |
+| 28   | Relay1 On/Off               |
+| 29   | Landing Gear                |
+| 30   | Lost Copter Sound           |
+| 31   | Motor Emergency Stop        |
+| 32   | Motor Interlock             |
+| 33   | BRAKE Mode                  |
+| 34   | Relay2 On/Off               |
+| 35   | Relay3 On/Off               |
+| 36   | Relay4 On/Off               |
+| 37   | THROW Mode                  |
+| 38   | ADSB Avoidance Enable       |
+| 39   | PrecLoiter Enable           |
+| 40   | Proximity Avoidance Enable  |
+| 41   | ArmDisarm (4.1 and lower)   |
+| 42   | SMARTRTL Mode               |
+| 43   | InvertedFlight Enable       |
+| 44   | Winch Enable                |
+| 45   | Winch Control               |
+| 46   | RC Override Enable          |
+| 47   | User Function 1             |
+| 48   | User Function 2             |
+| 49   | User Function 3             |
+| 52   | ACRO Mode                   |
+| 55   | GUIDED Mode                 |
+| 56   | LOITER Mode                 |
+| 57   | FOLLOW Mode                 |
+| 58   | Clear Waypoints             |
+| 60   | ZigZag Mode                 |
+| 61   | ZigZag SaveWP               |
+| 62   | Compass Learn               |
+| 65   | GPS Disable                 |
+| 66   | Relay5 On/Off               |
+| 67   | Relay6 On/Off               |
+| 68   | STABILIZE Mode              |
+| 69   | POSHOLD Mode                |
+| 70   | ALTHOLD Mode                |
+| 71   | FLOWHOLD Mode               |
+| 72   | CIRCLE Mode                 |
+| 73   | DRIFT Mode                  |
+| 75   | SurfaceTrackingUpDown       |
+| 76   | STANDBY Mode                |
+| 78   | RunCam Control              |
+| 79   | RunCam OSD Control          |
+| 80   | VisOdom Align               |
+| 81   | Disarm                      |
+| 83   | ZigZag Auto                 |
+| 84   | AirMode                     |
+| 85   | Generator                   |
+| 90   | EKF Source Set              |
+| 94   | VTX Power                   |
+| 99   | AUTO RTL                    |
+| 100  | KillIMU1                    |
+| 101  | KillIMU2                    |
+| 102  | Camera Mode Toggle          |
+| 103  | EKF lane switch attempt     |
+| 104  | EKF yaw reset               |
+| 105  | GPS Disable Yaw             |
+| 109  | use Custom Controller       |
+| 110  | KillIMU3                    |
+| 112  | SwitchExternalAHRS          |
+| 113  | Retract Mount2              |
+| 151  | TURTLE Mode                 |
+| 152  | SIMPLE heading reset        |
+| 153  | ArmDisarm (4.2 and higher)  |
+| 154  | ArmDisarm with AirMode (4.2 and higher) |
+| 158  | Optflow Calibration         |
+| 159  | Force IS_Flying             |
+| 161  | Turbine Start(heli)         |
+| 162  | FFT Tune                    |
+| 163  | Mount Lock                  |
+| 164  | Pause Stream Logging        |
+| 165  | Arm/Emergency Motor Stop    |
+| 166  | Camera Record Video         |
+| 167  | Camera Zoom                 |
+| 168  | Camera Manual Focus         |
+| 169  | Camera Auto Focus           |
+| 171  | Calibrate Compasses         |
+| 172  | Battery MPPT Enable         |
+| 174  | Camera Image Tracking       |
+| 175  | Camera Lens                 |
+| 177  | Mount LRF enable            |
+| 178  | FlightMode Pause/Resume     |
+| 180  | Test autotuned gains after tune is complete |
+| 182  | AHRS AutoTrim               |
+| 212  | Mount1 Roll                 |
+| 213  | Mount1 Pitch                |
+| 214  | Mount1 Yaw                  |
+| 215  | Mount2 Roll                 |
+| 216  | Mount2 Pitch                |
+| 217  | Mount2 Yaw                  |
+| 219  | Transmitter Tuning          |
+| 300  | Scripting1                  |
+| 301  | Scripting2                  |
+| 302  | Scripting3                  |
+| 303  | Scripting4                  |
+| 304  | Scripting5                  |
+| 305  | Scripting6                  |
+| 306  | Scripting7                  |
+| 307  | Scripting8                  |
+| 308  | Scripting9                  |
+| 309  | Scripting10                 |
+| 310  | Scripting11                 |
+| 311  | Scripting12                 |
+| 312  | Scripting13                 |
+| 313  | Scripting14                 |
+| 314  | Scripting15                 |
+| 315  | Scripting16                 |
+
+</details>
+二、设置参数
+<font color="red">MissionPlanner\Controls\MavlinkComboBox.cs</font>
+```C#
+ if (!MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, ParamName, (float)(Int32)Enum.Parse(_source, this.Text)))
+ {
+     CustomMessageBox.Show(String.Format(Strings.ErrorSetValueFailed, ParamName), Strings.ERROR);
+ }
+```  
+
+| 字段名 | 说明                     |  
+|------|------------------------------|  
+|sysidcurrent|默认值|
+|compidcurrent|默认值|
+|ParamName|修改字段，这里分别为<code>RC6_OPTION</code>-<code>RC16_OPTION</code>|  
+|sysidcurrent|修改下拉值|  
+
+三、获取指定参数
+发送对应的参数获取如 <code>RC6_OPTION</code> ，发送 <code>RC6_OPTION</code> 获取。

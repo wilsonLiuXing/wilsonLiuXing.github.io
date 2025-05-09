@@ -470,7 +470,7 @@ if (!MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.com
 
 <font color="red">MissionPlanner\GCSViews\ConfigurationView\ConfigRawParams.cs</font>
 
-## 一、参数
+### 一、参数
 ```xml
  <AHRS_ORIENTATION>
    <DisplayName>Board Orientation</DisplayName>
@@ -479,7 +479,7 @@ if (!MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.com
    <User>Advanced</User>
  </AHRS_ORIENTATION>
 ```
-## 二、设置指令  
+### 二、设置指令  
 <details>
  <summary>点击查看代码</summary>  
  
@@ -552,6 +552,255 @@ private void BUT_writePIDS_Click(object sender, EventArgs e)
             CustomMessageBox.Show("Set " + value + " Failed");
         }
     }
+```
+</details>
+
+# 遥控器校准
+
+## 一、接收机链接端口
+>对应的下拉框数据 <code>UARTx</code>，中的<code>x</code>代码对应的<code>SERIAL</code>,目前地面站分别为<code>SERIAL0-6</code>。  
+>1、假如选择了<code>UART1</code>，那么设置<code>SERIAL1_PROTOCOL = 23</code>、<code>SERIAL1_PROTOCOL = 57</code>。  
+
+代码参考：[设置安装飞控方向](#设置安装飞控方向)
+
+## 二、接收机协议(全部参数列表-RC_PROTOCOLS)
+
+1、参数
+| 编号 | 协议名称   |
+|------|------------|
+| 0    | All        |
+| 1    | PPM        |
+| 2    | IBUS       |
+| 3    | SBUS       |
+| 4    | SBUS_NI    |
+| 5    | DSM        |
+| 6    | SUMD       |
+| 7    | SRXL       |
+| 8    | SRXL2      |
+| 9    | CRSF       |
+| 10   | ST24       |
+| 11   | FPORT      |
+| 12   | FPORT2     |
+| 13   | FastSBUS   |
+| 14   | DroneCAN   |
+| 15   | Ghost      |
+
+更多详情请参考：[RC_PROTOCOLS 参数文档](https://ardupilot.org/copter/docs/parameters.html#rc-protocols-rc-protocols-enabled)
+
+2、写入代码参考：[设置安装飞控方向](#设置安装飞控方向)
+## 三、通道数据  
+
+<font color="red">MissionPlanner\GCSViews\ConfigurationView\ConfigRadioInput.cs</font>  
+
+一、"反转"按钮
+> 是否反转并不与飞控实现交互，纯界面展示。但要检查 <code>SWITCH_ENABLE</code>值是否为 <code>1</code> ,如果是则要设置为 <code>0</code> 。  
+
+```C#
+ if (MainV2.comPort.MAV.param["SWITCH_ENABLE"] != null &&
+     (float)MainV2.comPort.MAV.param["SWITCH_ENABLE"] == 1)
+ {
+     try
+     {
+         MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "SWITCH_ENABLE", 0);
+         CustomMessageBox.Show("Disabled Dip Switchs");
+     }
+     catch
+     {
+         CustomMessageBox.Show("Error Disableing Dip Switch");
+     }
+ }
+```  
+二、通道数据设置  
+1、ch1至ch16界面布局
+```C#
+this.BARpitch.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(20)))), ((int)(((byte)(255)))));
+this.BARpitch.BorderColor = System.Drawing.SystemColors.ActiveBorder;
+this.BARpitch.DisplayScale = 1F;
+this.BARpitch.DrawLabel = true;
+this.BARpitch.Label = "Pitch";
+resources.ApplyResources(this.BARpitch, "BARpitch");
+this.BARpitch.Maximum = 2200;
+this.BARpitch.maxline = 0;
+this.BARpitch.Minimum = 800;
+this.BARpitch.minline = 0;
+this.BARpitch.Name = "BARpitch";
+this.BARpitch.Value = 1500;
+this.BARpitch.ValueColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+```  
+2、数据获取
+>在代码中没有找到对应的取值方式，GTP说通过 <code>RC_CHANNELS</code>指令获取。  
+
+三、校准遥控
+<details>
+<summary>点击查看代码</summary>  
+
+```C#  
+// 遥控器校准按钮点击事件处理函数
+private void BUT_Calibrateradio_Click(object sender, EventArgs e)
+{
+    // 如果校准正在进行（run = true），则结束校准
+    if (run)
+    {
+        BUT_Calibrateradio.Text = Strings.Completed; // 更新按钮文本为“完成”
+        run = false; // 标记校准结束
+        return;
+    }
+
+    // 显示安全警告：确保遥控器和接收机已通电，且电机未供电/未安装螺旋桨
+    CustomMessageBox.Show(
+        "Ensure your transmitter is on and receiver is powered and connected\nEnsure your motor does not have power/no props!!!");
+
+    // 保存当前飞控的数据流速率（用于后续恢复）
+    var oldrc = MainV2.comPort.MAV.cs.raterc;          // 遥控器通道数据速率
+    var oldatt = MainV2.comPort.MAV.cs.rateattitude;   // 姿态数据速率
+    var oldpos = MainV2.comPort.MAV.cs.rateposition;   // 位置数据速率
+    var oldstatus = MainV2.comPort.MAV.cs.ratestatus;  // 状态数据速率
+
+    // 临时调整数据流速率：优先接收遥控器通道数据（10Hz），其他数据流暂停
+    MainV2.comPort.MAV.cs.raterc = 10;         // 设置遥控器通道数据速率为10Hz
+    MainV2.comPort.MAV.cs.rateattitude = 0;    // 禁用姿态数据流
+    MainV2.comPort.MAV.cs.rateposition = 0;    // 禁位置数据流
+    MainV2.comPort.MAV.cs.ratestatus = 0;      // 禁用状态数据流
+
+    // 请求飞控发送遥控器通道数据流（MAVLink协议）
+    try
+    {
+        MainV2.comPort.requestDatastream(MAVLink.MAV_DATA_STREAM.RC_CHANNELS, 10);
+    }
+    catch { /* 忽略请求失败 */ }
+
+    // 更新按钮文本为“点击完成”
+    BUT_Calibrateradio.Text = Strings.Click_when_Done;
+
+    // 提示用户操作：移动所有摇杆和开关到极限位置
+    CustomMessageBox.Show(
+        "Click OK and move all RC sticks and switches to their\nextreme positions so the red bars hit the limits.");
+
+    run = true; // 标记校准开始
+
+    // 主校准循环：实时检测通道值并更新最小/最大值
+    while (run)
+    {
+        Application.DoEvents(); // 处理UI事件（避免界面卡死）
+        Thread.Sleep(5);       // 短暂延迟（5ms），降低CPU占用
+
+        // 更新当前飞控状态数据（绑定到UI）
+        MainV2.comPort.MAV.cs.UpdateCurrentSettings(
+            currentStateBindingSource.UpdateDataSource(MainV2.comPort.MAV.cs), 
+            true, 
+            MainV2.comPort
+        );
+
+        // 检查通道1输入是否有效（800-2200μs为合理PWM范围）
+        if (MainV2.comPort.MAV.cs.ch1in > 800 && MainV2.comPort.MAV.cs.ch1in < 2200)
+        {
+            // 遍历所有16个通道，更新每个通道的最小值（rcmin）和最大值（rcmax）
+            for (int i = 0; i < 16; i++)
+            {
+                rcmin[i] = Math.Min(rcmin[i], MainV2.comPort.MAV.cs.GetChannelValue(i)); // 更新最小值
+                rcmax[i] = Math.Max(rcmax[i], MainV2.comPort.MAV.cs.GetChannelValue(i)); // 更新最大值
+            }
+
+            // 更新主控制通道（横滚、俯仰、油门、偏航）的UI显示
+            BARroll.minline = (int)rcmin[chroll - 1];    // 横滚通道最小值
+            BARroll.maxline = (int)rcmax[chroll - 1];    // 横滚通道最大值
+            BARpitch.minline = (int)rcmin[chpitch - 1];  // 俯仰通道最小值
+            BARpitch.maxline = (int)rcmax[chpitch - 1]; // 俯仰通道最大值
+            BARthrottle.minline = (int)rcmin[chthro - 1];// 油门通道最小值
+            BARthrottle.maxline = (int)rcmax[chthro - 1];// 油门通道最大值
+            BARyaw.minline = (int)rcmin[chyaw - 1];      // 偏航通道最小值
+            BARyaw.maxline = (int)rcmax[chyaw - 1];      // 偏航通道最大值
+
+            // 更新辅助通道（5-16）的UI显示
+            for (int i = 4; i < 16; i++)
+            {
+                setBARStatus(GetBarControl(i + 1), rcmin[i], rcmax[i]); // 设置通道条形图范围
+            }
+        }
+    }
+
+    // 校验通道1输入是否有效
+    if (rcmin[0] <= 800 || rcmin[0] >= 2200)
+    {
+        CustomMessageBox.Show("Bad channel 1 input, canceling"); // 输入异常提示
+        return;
+    }
+
+    // 提示用户将摇杆回中并确认
+    CustomMessageBox.Show("Ensure all your sticks are centered and throttle is down, and click ok to continue");
+
+    // 更新飞控状态数据（获取当前居中值作为“微调”值）
+    MainV2.comPort.MAV.cs.UpdateCurrentSettings(
+        currentStateBindingSource.UpdateDataSource(MainV2.comPort.MAV.cs), 
+        true, 
+        MainV2.comPort
+    );
+
+    // 记录每个通道的居中值（Trim值）
+    for (int i = 0; i < 16; i++)
+    {
+        rctrim[i] = Constrain(MainV2.comPort.MAV.cs.GetChannelValue(i), i); // 约束并保存Trim值
+    }
+
+    // 生成校准结果日志
+    var data = "---------------\n";
+    for (var a = 0; a < rctrim.Length; a++)
+    {
+        BUT_Calibrateradio.Text = Strings.Saving; // 更新按钮文本为“保存中”
+        try
+        {
+            // 校验数据有效性：最小值 < 最大值，且Trim值在范围内
+            if (rcmin[a] < rcmax[a] && rcmin[a] != 0 && rcmax[a] != 0 &&
+                rctrim[a] <= rcmax[a] && rctrim[a] >= rcmin[a] && rctrim[a] != 0 &&
+                rcmin[a] != rcmax[a])
+            {
+                // 将校准结果写入飞控参数（RCx_MIN, RCx_MAX, RCx_TRIM）
+                MainV2.comPort.setParam(
+                    (byte)MainV2.comPort.sysidcurrent, 
+                    (byte)MainV2.comPort.compidcurrent,
+                    "RC" + (a + 1).ToString("0") + "_MIN", rcmin[a], true
+                );
+                MainV2.comPort.setParam(
+                    (byte)MainV2.comPort.sysidcurrent, 
+                    (byte)MainV2.comPort.compidcurrent,
+                    "RC" + (a + 1).ToString("0") + "_MAX", rcmax[a], true
+                );
+                MainV2.comPort.setParam(
+                    (byte)MainV2.comPort.sysidcurrent, 
+                    (byte)MainV2.comPort.compidcurrent,
+                    "RC" + (a + 1).ToString("0") + "_TRIM", rctrim[a], true
+                );
+            }
+        }
+        catch
+        {
+            if (MainV2.comPort.MAV.param.ContainsKey("RC" + (a + 1).ToString("0") + "_MIN"))
+                CustomMessageBox.Show("Failed to set Channel " + (a + 1)); // 参数写入失败提示
+        }
+
+        data = data + "CH" + (a + 1) + " " + rcmin[a] + " | " + rcmax[a] + "\n"; // 记录通道范围
+    }
+
+    // 恢复原始数据流速率
+    MainV2.comPort.MAV.cs.raterc = oldrc;
+    MainV2.comPort.MAV.cs.rateattitude = oldatt;
+    MainV2.comPort.MAV.cs.rateposition = oldpos;
+    MainV2.comPort.MAV.cs.ratestatus = oldstatus;
+
+    // 请求飞控恢复原始数据流
+    try
+    {
+        MainV2.comPort.requestDatastream(MAVLink.MAV_DATA_STREAM.RC_CHANNELS, oldrc);
+    }
+    catch { /* 忽略失败 */ }
+
+    // 显示校准结果摘要
+    CustomMessageBox.Show(
+        "Here are the detected radio options\nNOTE Channels not connected are displayed as 1500 +-2\nNormal values are around 1100 | 1900\nChannel:Min | Max \n" +
+        data, "Radio");
+
+    BUT_Calibrateradio.Text = Strings.Completed; // 标记校准完成
+}
 ```
 </details>
 

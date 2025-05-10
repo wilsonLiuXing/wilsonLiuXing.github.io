@@ -559,7 +559,7 @@ private void BUT_writePIDS_Click(object sender, EventArgs e)
 
 ## 一、接收机链接端口
 >对应的下拉框数据 <code>UARTx</code>，中的<code>x</code>代码对应的<code>SERIAL</code>,目前地面站分别为<code>SERIAL0-6</code>。  
->1、假如选择了<code>UART1</code>，那么设置<code>SERIAL1_PROTOCOL = 23</code>、<code>SERIAL1_PROTOCOL = 57</code>。  
+>1、假如选择了<code>UART1</code>，那么设置<code>SERIAL1_PROTOCOL = 23</code>、<code>SERIAL1_BAUD = 57</code>。  
 
 代码参考：[设置安装飞控方向](#设置安装飞控方向)
 

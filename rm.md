@@ -945,8 +945,8 @@ private void BUT_Calibrateradio_Click(object sender, EventArgs e)
 | 315  | Scripting16                 |
 
 </details>
-二、设置参数
-<font color="red">MissionPlanner\Controls\MavlinkComboBox.cs</font>
+二、设置参数  
+<font color="red">MissionPlanner\Controls\MavlinkComboBox.cs</font>  
 ```C#
  if (!MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, ParamName, (float)(Int32)Enum.Parse(_source, this.Text)))
  {

@@ -559,7 +559,7 @@ private void BUT_writePIDS_Click(object sender, EventArgs e)
 
 ## 一、接收机链接端口
 >对应的下拉框数据 <code>UARTx</code>，中的<code>x</code>代码对应的<code>SERIAL</code>,目前地面站分别为<code>SERIAL0-6</code>。  
->1、假如选择了<code>UART1</code>，那么设置<code>SERIAL1_PROTOCOL = 23</code>、<code>SERIAL1_BAUD = 57</code>。  
+>1、假如选择了<code>UART1</code>，那么设置<code>SERIAL1_PROTOCOL = 23</code>、<code>SERIAL1_PROTOCOL = 57</code>。  
 
 代码参考：[设置安装飞控方向](#设置安装飞控方向)
 
@@ -945,10 +945,8 @@ private void BUT_Calibrateradio_Click(object sender, EventArgs e)
 | 315  | Scripting16                 |
 
 </details>
-二、设置参数  
-
-<font color="red">MissionPlanner\Controls\MavlinkComboBox.cs</font>  
-
+二、设置参数
+<font color="red">MissionPlanner\Controls\MavlinkComboBox.cs</font>
 ```C#
  if (!MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, ParamName, (float)(Int32)Enum.Parse(_source, this.Text)))
  {
@@ -964,4 +962,76 @@ private void BUT_Calibrateradio_Click(object sender, EventArgs e)
 |sysidcurrent|修改下拉值|  
 
 三、获取指定参数
-发送对应的参数获取如 <code>RC6_OPTION</code> ，发送 <code>RC6_OPTION</code> 获取。
+发送对应的参数获取如 <code>RC6_OPTION</code> ，发送 <code>RC6_OPTION</code> 获取。  
+
+# 舵机输出
+<font color="red">MissionPlanner\GCSViews\ConfigurationView\ConfigRadioOutput.cs</font>  
+```C#
+ private void setup(int servono)
+ {
+     var servo = String.Format("SERVO{0}", servono);
+
+     var label = new Label()
+         {Text = servono.ToString(), AutoSize = true, TextAlign = System.Drawing.ContentAlignment.MiddleCenter};
+     var bAR1 = new HorizontalProgressBar2()
+     {
+         Minimum = 800, Maximum = 2200, Value = 1500, DrawLabel = true, Name = "BAR" + servono,
+         Dock = DockStyle.Fill
+     };
+     var rev1 = new MissionPlanner.Controls.MavlinkCheckBox()
+         {Enabled = false, Dock = DockStyle.Fill, AutoSize = true};
+     var func1 = new MavlinkComboBox()
+     { Enabled = false, Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Width = 160 };
+     var min1 = new MavlinkNumericUpDown() { Minimum = 800, Maximum = 2200, Value = 1500, Enabled = false, Width = 50 };
+     var trim1 = new MavlinkNumericUpDown() { Minimum = 800, Maximum = 2200, Value = 1500, Enabled = false, Width = 50 };
+     var max1 = new MavlinkNumericUpDown() { Minimum = 800, Maximum = 2200, Value = 1500, Enabled = false, Width = 50 };
+
+     this.tableLayoutPanel1.Controls.Add(label, 0, servono);
+     this.tableLayoutPanel1.Controls.Add(bAR1, 1, servono);
+     this.tableLayoutPanel1.Controls.Add(rev1, 2, servono);
+     this.tableLayoutPanel1.Controls.Add(func1, 3, servono);
+     this.tableLayoutPanel1.Controls.Add(min1, 4, servono);
+     this.tableLayoutPanel1.Controls.Add(trim1, 5, servono);
+     this.tableLayoutPanel1.Controls.Add(max1, 6, servono);
+
+     bAR1.DataBindings.Add("Value", bindingSource1, "ch" + servono + "out");
+     rev1.setup(1, 0, servo + "_REVERSED", MainV2.comPort.MAV.param);
+     func1.setup(ParameterMetaDataRepository.GetParameterOptionsInt(servo + "_FUNCTION",
+             MainV2.comPort.MAV.cs.firmware.ToString()), servo + "_FUNCTION", MainV2.comPort.MAV.param);
+     min1.setup(800, 2200, 1, 1, servo + "_MIN", MainV2.comPort.MAV.param);
+     trim1.setup(800, 2200, 1, 1, servo + "_TRIM", MainV2.comPort.MAV.param);
+     max1.setup(800, 2200, 1, 1, servo + "_MAX", MainV2.comPort.MAV.param);
+ }
+```
+## 一、参数值
+
+| 编号 | 参数名                    |
+|------|------------------------------|
+| position | ch<code>X</code>out|
+| reverse | SERVO<code>X</code>_REVERSED|
+| function | SERVO<code>X</code>_FUNCTION|
+| mix | SERVO<code>X</code>_MIN|
+| trim | SERVO<code>X</code>_TRIM|
+| max | SERVO<code>X</code>_MAX|  
+
+> <code>X</code> 表示对应的编号，如<code>ch1out</code>。   
+
+> <code>mix</code>、<code>trim</code>、<code>max</code>的最大值为<code>2200</code>,最小值为<code>800</code>。
+
+
+### 参数设置
+>参数设置与常规的参数设置一之。<code>ParamName</code> 格式为[一、参数值](#一、参数值)中的的格式。
+```C#
+ try
+ {
+     bool ans = MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, ParamName, OnValue);
+     if (ans == false)
+         CustomMessageBox.Show(String.Format(Strings.ErrorSetValueFailed, ParamName), Strings.ERROR);
+     else
+         CallBackOnChange?.Invoke();
+ }
+ catch
+ {
+     CustomMessageBox.Show(String.Format(Strings.ErrorSetValueFailed, ParamName), Strings.ERROR);
+ }
+```

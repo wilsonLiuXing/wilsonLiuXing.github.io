@@ -1019,7 +1019,7 @@ private void BUT_Calibrateradio_Click(object sender, EventArgs e)
 > <code>mix</code>、<code>trim</code>、<code>max</code>的最大值为<code>2200</code>,最小值为<code>800</code>。
 
 
-### 参数设置
+## 二、参数设置
 >参数设置与常规的参数设置一之。<code>ParamName</code> 格式为[一、参数值](#一、参数值)中的的格式。
 ```C#
  try
@@ -1035,3 +1035,6 @@ private void BUT_Calibrateradio_Click(object sender, EventArgs e)
      CustomMessageBox.Show(String.Format(Strings.ErrorSetValueFailed, ParamName), Strings.ERROR);
  }
 ```
+
+## 三、function下拉数据
+请参考：[参数文档](https://ardupilot.org/copter/docs/parameters-Copter-stable-V4.5.3.html)

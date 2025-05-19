@@ -1052,26 +1052,29 @@ private void BUT_Calibrateradio_Click(object sender, EventArgs e)
 ```C#
 public void Activate()
 {
+    // 绑定 FS_THR_ENABLE 参数到 mavlinkComboBox_fs_thr_enable 控件（用于设置油门失控开关）
     mavlinkComboBox_fs_thr_enable.setup(
         ParameterMetaDataRepository.GetParameterOptionsInt("FS_THR_ENABLE",
             MainV2.comPort.MAV.cs.firmware.ToString()), "FS_THR_ENABLE", MainV2.comPort.MAV.param);
 
-    // arducopter
+    // 判断是否是 ArduCopter：使用 BATT_FS_LOW_ACT（Copter 新版电池失控参数）
     if (MainV2.comPort.MAV.param.ContainsKey("BATT_FS_LOW_ACT"))
     {
         mavlinkComboBoxfs_batt_enable.setup(
-        ParameterMetaDataRepository.GetParameterOptionsInt("BATT_FS_LOW_ACT",
-            MainV2.comPort.MAV.cs.firmware.ToString()), "BATT_FS_LOW_ACT", MainV2.comPort.MAV.param);
+            ParameterMetaDataRepository.GetParameterOptionsInt("BATT_FS_LOW_ACT",
+                MainV2.comPort.MAV.cs.firmware.ToString()), "BATT_FS_LOW_ACT", MainV2.comPort.MAV.param);
     }
-    else
+    else // 向后兼容：使用老版本 Copter 的 FS_BATT_ENABLE
     {
         mavlinkComboBoxfs_batt_enable.setup(
-        ParameterMetaDataRepository.GetParameterOptionsInt("FS_BATT_ENABLE",
-            MainV2.comPort.MAV.cs.firmware.ToString()), "FS_BATT_ENABLE", MainV2.comPort.MAV.param);
+            ParameterMetaDataRepository.GetParameterOptionsInt("FS_BATT_ENABLE",
+                MainV2.comPort.MAV.cs.firmware.ToString()), "FS_BATT_ENABLE", MainV2.comPort.MAV.param);
     }
+
+    // 设置油门触发值范围（单位为 PWM），绑定 FS_THR_VALUE 参数
     mavlinkNumericUpDownfs_thr_value.setup(800, 1200, 1, 1, "FS_THR_VALUE", MainV2.comPort.MAV.param);
 
-    // low battery
+    // 配置低电压触发值，选择合适的参数名（根据固件版本不同）
     if (MainV2.comPort.MAV.param.ContainsKey("LOW_VOLT"))
     {
         mavlinkNumericUpDownlow_voltage.setup(6, 99, 1, 0.1f, "LOW_VOLT", MainV2.comPort.MAV.param, PNL_low_bat);
@@ -1081,12 +1084,13 @@ public void Activate()
         mavlinkNumericUpDownlow_voltage.setup(6, 99, 1, 0.1f, "FS_BATT_VOLTAGE", MainV2.comPort.MAV.param,
             PNL_low_bat);
     }
-    else
+    else // 默认使用 BATT_LOW_VOLT
     {
         mavlinkNumericUpDownlow_voltage.setup(6, 99, 1, 0.1f, "BATT_LOW_VOLT", MainV2.comPort.MAV.param,
             PNL_low_bat);
     }
 
+    // 配置失控触发的最小电量阈值（单位 mAh）
     if (MainV2.comPort.MAV.param.ContainsKey("FS_BATT_MAH"))
     {
         mavlinkNumericUpDownFS_BATT_MAH.setup(0, 99999, 1, 1, "FS_BATT_MAH", MainV2.comPort.MAV.param, pnlmah);
@@ -1096,27 +1100,42 @@ public void Activate()
         mavlinkNumericUpDownFS_BATT_MAH.setup(0, 99999, 1, 1, "BATT_LOW_MAH", MainV2.comPort.MAV.param, pnlmah);
     }
 
+    // 电池低电触发延时（单位：秒）
     if (MainV2.comPort.MAV.param.ContainsKey("BATT_LOW_TIMER"))
     {
         mavlinkNumericUpDownBATT_LOW_TIMER.setup(0, 120, 1, 1, "BATT_LOW_TIMER", MainV2.comPort.MAV.param, pnltimer);
     }
 
-    // removed at randys request
-    //mavlinkCheckBoxfs_gps_enable.setup(1, 0, "FS_GPS_ENABLE", MainV2.comPort.MAV.param);
+    // 备注：FS_GPS_ENABLE 设置已被删除（Randy 请求）
+    // mavlinkCheckBoxfs_gps_enable.setup(1, 0, "FS_GPS_ENABLE", MainV2.comPort.MAV.param);
+
+    // 地面站信号丢失保护（GCS failsafe）
     mavlinkCheckBoxFS_GCS_ENABLE.setup(1, 0, "FS_GCS_ENABLE", MainV2.comPort.MAV.param);
 
-    // plane
+    // 飞机专用：油门失控开关（开启/关闭）
     mavlinkCheckBoxthr_fs.setup(1, 0, "THR_FAILSAFE", MainV2.comPort.MAV.param, mavlinkNumericUpDownthr_fs_value);
+
+    // 飞机专用：油门失控触发值设置（PWM 值）
     mavlinkNumericUpDownthr_fs_value.setup(800, 1200, 1, 1, "THR_FS_VALUE", MainV2.comPort.MAV.param);
+
+    // 飞机专用：油门失控行为（动作控制）
     mavlinkCheckBoxthr_fs_action.setup(1, 0, "THR_FS_ACTION", MainV2.comPort.MAV.param);
+
+    // 飞机专用：地面站信号丢失保护
     mavlinkCheckBoxgcs_fs.setup(1, 0, "FS_GCS_ENABL", MainV2.comPort.MAV.param);
+
+    // 飞机专用：短暂失控行为设置
     mavlinkCheckBoxshort_fs.setup(1, 0, "FS_SHORT_ACTN", MainV2.comPort.MAV.param);
+
+    // 飞机专用：长时间失控行为设置
     mavlinkCheckBoxlong_fs.setup(1, 0, "FS_LONG_ACTN", MainV2.comPort.MAV.param);
 
+    // 启动 UI 定时器（每 100ms 刷新一次数据）
     _timer.Enabled = true;
     _timer.Interval = 100;
     _timer.Start();
 
+    // 提示用户：启动配置前请取下螺旋桨
     CustomMessageBox.Show("Ensure your props are not on the Plane/Quad", "FailSafe", MessageBoxButtons.OK,
         MessageBoxIcon.Exclamation);
 }

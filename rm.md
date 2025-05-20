@@ -1052,29 +1052,26 @@ private void BUT_Calibrateradio_Click(object sender, EventArgs e)
 ```C#
 public void Activate()
 {
-    // 绑定 FS_THR_ENABLE 参数到 mavlinkComboBox_fs_thr_enable 控件（用于设置油门失控开关）
     mavlinkComboBox_fs_thr_enable.setup(
         ParameterMetaDataRepository.GetParameterOptionsInt("FS_THR_ENABLE",
             MainV2.comPort.MAV.cs.firmware.ToString()), "FS_THR_ENABLE", MainV2.comPort.MAV.param);
 
-    // 判断是否是 ArduCopter：使用 BATT_FS_LOW_ACT（Copter 新版电池失控参数）
+    // arducopter
     if (MainV2.comPort.MAV.param.ContainsKey("BATT_FS_LOW_ACT"))
     {
         mavlinkComboBoxfs_batt_enable.setup(
-            ParameterMetaDataRepository.GetParameterOptionsInt("BATT_FS_LOW_ACT",
-                MainV2.comPort.MAV.cs.firmware.ToString()), "BATT_FS_LOW_ACT", MainV2.comPort.MAV.param);
+        ParameterMetaDataRepository.GetParameterOptionsInt("BATT_FS_LOW_ACT",
+            MainV2.comPort.MAV.cs.firmware.ToString()), "BATT_FS_LOW_ACT", MainV2.comPort.MAV.param);
     }
-    else // 向后兼容：使用老版本 Copter 的 FS_BATT_ENABLE
+    else
     {
         mavlinkComboBoxfs_batt_enable.setup(
-            ParameterMetaDataRepository.GetParameterOptionsInt("FS_BATT_ENABLE",
-                MainV2.comPort.MAV.cs.firmware.ToString()), "FS_BATT_ENABLE", MainV2.comPort.MAV.param);
+        ParameterMetaDataRepository.GetParameterOptionsInt("FS_BATT_ENABLE",
+            MainV2.comPort.MAV.cs.firmware.ToString()), "FS_BATT_ENABLE", MainV2.comPort.MAV.param);
     }
-
-    // 设置油门触发值范围（单位为 PWM），绑定 FS_THR_VALUE 参数
     mavlinkNumericUpDownfs_thr_value.setup(800, 1200, 1, 1, "FS_THR_VALUE", MainV2.comPort.MAV.param);
 
-    // 配置低电压触发值，选择合适的参数名（根据固件版本不同）
+    // low battery
     if (MainV2.comPort.MAV.param.ContainsKey("LOW_VOLT"))
     {
         mavlinkNumericUpDownlow_voltage.setup(6, 99, 1, 0.1f, "LOW_VOLT", MainV2.comPort.MAV.param, PNL_low_bat);
@@ -1084,13 +1081,12 @@ public void Activate()
         mavlinkNumericUpDownlow_voltage.setup(6, 99, 1, 0.1f, "FS_BATT_VOLTAGE", MainV2.comPort.MAV.param,
             PNL_low_bat);
     }
-    else // 默认使用 BATT_LOW_VOLT
+    else
     {
         mavlinkNumericUpDownlow_voltage.setup(6, 99, 1, 0.1f, "BATT_LOW_VOLT", MainV2.comPort.MAV.param,
             PNL_low_bat);
     }
 
-    // 配置失控触发的最小电量阈值（单位 mAh）
     if (MainV2.comPort.MAV.param.ContainsKey("FS_BATT_MAH"))
     {
         mavlinkNumericUpDownFS_BATT_MAH.setup(0, 99999, 1, 1, "FS_BATT_MAH", MainV2.comPort.MAV.param, pnlmah);
@@ -1100,44 +1096,62 @@ public void Activate()
         mavlinkNumericUpDownFS_BATT_MAH.setup(0, 99999, 1, 1, "BATT_LOW_MAH", MainV2.comPort.MAV.param, pnlmah);
     }
 
-    // 电池低电触发延时（单位：秒）
     if (MainV2.comPort.MAV.param.ContainsKey("BATT_LOW_TIMER"))
     {
         mavlinkNumericUpDownBATT_LOW_TIMER.setup(0, 120, 1, 1, "BATT_LOW_TIMER", MainV2.comPort.MAV.param, pnltimer);
     }
 
-    // 备注：FS_GPS_ENABLE 设置已被删除（Randy 请求）
-    // mavlinkCheckBoxfs_gps_enable.setup(1, 0, "FS_GPS_ENABLE", MainV2.comPort.MAV.param);
-
-    // 地面站信号丢失保护（GCS failsafe）
+    // removed at randys request
+    //mavlinkCheckBoxfs_gps_enable.setup(1, 0, "FS_GPS_ENABLE", MainV2.comPort.MAV.param);
     mavlinkCheckBoxFS_GCS_ENABLE.setup(1, 0, "FS_GCS_ENABLE", MainV2.comPort.MAV.param);
 
-    // 飞机专用：油门失控开关（开启/关闭）
+    // plane
     mavlinkCheckBoxthr_fs.setup(1, 0, "THR_FAILSAFE", MainV2.comPort.MAV.param, mavlinkNumericUpDownthr_fs_value);
-
-    // 飞机专用：油门失控触发值设置（PWM 值）
     mavlinkNumericUpDownthr_fs_value.setup(800, 1200, 1, 1, "THR_FS_VALUE", MainV2.comPort.MAV.param);
-
-    // 飞机专用：油门失控行为（动作控制）
     mavlinkCheckBoxthr_fs_action.setup(1, 0, "THR_FS_ACTION", MainV2.comPort.MAV.param);
-
-    // 飞机专用：地面站信号丢失保护
     mavlinkCheckBoxgcs_fs.setup(1, 0, "FS_GCS_ENABL", MainV2.comPort.MAV.param);
-
-    // 飞机专用：短暂失控行为设置
     mavlinkCheckBoxshort_fs.setup(1, 0, "FS_SHORT_ACTN", MainV2.comPort.MAV.param);
-
-    // 飞机专用：长时间失控行为设置
     mavlinkCheckBoxlong_fs.setup(1, 0, "FS_LONG_ACTN", MainV2.comPort.MAV.param);
 
-    // 启动 UI 定时器（每 100ms 刷新一次数据）
     _timer.Enabled = true;
     _timer.Interval = 100;
     _timer.Start();
 
-    // 提示用户：启动配置前请取下螺旋桨
     CustomMessageBox.Show("Ensure your props are not on the Plane/Quad", "FailSafe", MessageBoxButtons.OK,
         MessageBoxIcon.Exclamation);
 }
 
+```
+## 一、失控保护开关
+```XML
+	<THR_FAILSAFE>
+	<DisplayName>Throttle and RC Failsafe Enable</DisplayName>
+	<Description>0 disables the failsafe. 1 enables failsafe on loss of RC input. This is detected either by throttle values below THR_FS_VALUE, loss of receiver valid pulses/data, or by the FS bit in receivers that provide it, like SBUS. A programmable failsafe action will occur and RC inputs, if present, will be ignored. A value of 2 means that the RC inputs won't be used when RC failsafe is detected by any of the above methods, but it won't trigger an RC failsafe action.</Description>
+	<Values>0:Disabled,1:Enabled,2:EnabledNoFailsafe</Values>
+	<User>Standard</User>
+</THR_FAILSAFE>
+```
+##第一、第二阶段保护
+```xml
+<FS_LONG_ACTN>
+  <DisplayName>Long failsafe action</DisplayName>
+  <Description>The action to take on a long (FS_LONG_TIMEOUT seconds) failsafe event. If the aircraft was in a stabilization or manual mode when failsafe started and a long failsafe occurs then it will change to RTL mode if FS_LONG_ACTN is 0 or 1, and will change to FBWA if FS_LONG_ACTN is set to 2. If the aircraft was in an auto mode (such as AUTO or GUIDED) when the failsafe started then it will continue in the auto mode if FS_LONG_ACTN is set to 0, will change to RTL mode if FS_LONG_ACTN is set to 1 and will change to FBWA mode if FS_LONG_ACTN is set to 2. If FS_LONG_ACTION is set to 3, the parachute will be deployed (make sure the chute is configured and enabled).</Description>
+  <Values>0:Continue,1:ReturnToLaunch,2:Glide,3:Deploy Parachute</Values>
+  <User>Standard</User>
+</FS_LONG_ACTN>
+<FS_LONG_TIMEOUT>
+  <DisplayName>Long failsafe timeout</DisplayName>
+  <Description>The time in seconds that a failsafe condition has to persist before a long failsafe event will occur. This defaults to 5 seconds.</Description>
+  <Units>s</Units>
+  <Range>1 300</Range>
+  <Increment>0.5</Increment>
+  <User>Standard</User>
+</FS_LONG_TIMEOUT>
+<FS_SHORT_ACTN>
+  <DisplayName>Short failsafe action</DisplayName>
+  <Description>The action to take on a short (FS_SHORT_TIMEOUT) failsafe event. A short failsafe even can be triggered either by loss of RC control (see THR_FS_VALUE) or by loss of GCS control (see FS_GCS_ENABL). If in CIRCLE or RTL mode this parameter is ignored. A short failsafe event in stabilization and manual modes will cause an change to CIRCLE mode if FS_SHORT_ACTN is 0 or 1, and a change to FBWA mode if FS_SHORT_ACTN is 2. In all other modes (AUTO, GUIDED and LOITER) a short failsafe event will cause no mode change if FS_SHORT_ACTN is set to 0, will cause a change to CIRCLE mode if set to 1 and will change to FBWA mode if set to 2. Please see the documentation for FS_LONG_ACTN for the behaviour after FS_LONG_TIMEOUT seconds of failsafe.</Description>
+  <Values>0:CIRCLE/no change(if already in AUTO|GUIDED|LOITER),1:CIRCLE,2:FBWA,3:Disable</Values>
+  <User>Standard</User>
+</FS_SHORT_ACTN>
+<FS_SHORT_TIMEOUT>
 ```

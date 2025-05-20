@@ -1130,6 +1130,13 @@ public void Activate()
 	<Values>0:Disabled,1:Enabled,2:EnabledNoFailsafe</Values>
 	<User>Standard</User>
 </THR_FAILSAFE>
+<THR_FS_VALUE>
+	<DisplayName>Throttle Failsafe Value</DisplayName>
+	<Description>The PWM level on the throttle input channel below which throttle failsafe triggers. Note that this should be well below the normal minimum for your throttle channel.</Description>
+	<Range>925 2200</Range>
+	<Increment>1</Increment>
+	<User>Standard</User>
+</THR_FS_VALUE>
 ```
 ##第一、第二阶段保护
 ```xml
@@ -1153,5 +1160,12 @@ public void Activate()
   <Values>0:CIRCLE/no change(if already in AUTO|GUIDED|LOITER),1:CIRCLE,2:FBWA,3:Disable</Values>
   <User>Standard</User>
 </FS_SHORT_ACTN>
-<FS_SHORT_TIMEOUT>
+ <FS_SHORT_TIMEOUT>
+   <DisplayName>Short failsafe timeout</DisplayName>
+   <Description>The time in seconds that a failsafe condition has to persist before a short failsafe event will occur. This defaults to 1.5 seconds</Description>
+   <Units>s</Units>
+   <Range>1 100</Range>
+   <Increment>0.5</Increment>
+   <User>Standard</User>
+ </FS_SHORT_TIMEOUT>
 ```

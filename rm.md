@@ -1168,4 +1168,212 @@ public void Activate()
    <Increment>0.5</Increment>
    <User>Standard</User>
  </FS_SHORT_TIMEOUT>
+```  
+
+# 飞行模式
+<font color="red">MissionPlanner\GCSViews\ConfigurationView\ConfigFlightModes.Designer.cs</font>  
+
+## 一、各模式当前值
+```C#
+CMB_fmode1.SelectedValue = int.Parse(MainV2.comPort.MAV.param["FLTMODE1"].ToString());
+CMB_fmode2.SelectedValue = int.Parse(MainV2.comPort.MAV.param["FLTMODE2"].ToString());
+CMB_fmode3.SelectedValue = int.Parse(MainV2.comPort.MAV.param["FLTMODE3"].ToString());
+CMB_fmode4.SelectedValue = int.Parse(MainV2.comPort.MAV.param["FLTMODE4"].ToString());
+CMB_fmode5.SelectedValue = int.Parse(MainV2.comPort.MAV.param["FLTMODE5"].ToString());
+CMB_fmode6.SelectedValue = int.Parse(MainV2.comPort.MAV.param["FLTMODE6"].ToString());
+```  
+
+## 飞行模式通道
+<details>
+<summary>点击查看代码</summary>  
+
+```C#
+if (MainV2.comPort.MAV.param.ContainsKey("FLTMODE_CH") ||
+    MainV2.comPort.MAV.param.ContainsKey("MODE_CH"))
+{
+    var sw = 0;
+    if (MainV2.comPort.MAV.param.ContainsKey("FLTMODE_CH"))
+    {
+        sw = (int)MainV2.comPort.MAV.param["FLTMODE_CH"].Value;
+    }
+    else
+    {
+        sw = (int)MainV2.comPort.MAV.param["MODE_CH"].Value;
+    }
+
+    switch (sw)
+    {
+        case 5:
+            pwm = MainV2.comPort.MAV.cs.ch5in;
+            break;
+        case 6:
+            pwm = MainV2.comPort.MAV.cs.ch6in;
+            break;
+        case 7:
+            pwm = MainV2.comPort.MAV.cs.ch7in;
+            break;
+        case 8:
+            pwm = MainV2.comPort.MAV.cs.ch8in;
+            break;
+        case 9:
+            pwm = MainV2.comPort.MAV.cs.ch9in;
+            break;
+        case 10:
+            pwm = MainV2.comPort.MAV.cs.ch10in;
+            break;
+        case 11:
+            pwm = MainV2.comPort.MAV.cs.ch11in;
+            break;
+        case 12:
+            pwm = MainV2.comPort.MAV.cs.ch12in;
+            break;
+        case 13:
+            pwm = MainV2.comPort.MAV.cs.ch13in;
+            break;
+        case 14:
+            pwm = MainV2.comPort.MAV.cs.ch14in;
+            break;
+        case 15:
+            pwm = MainV2.comPort.MAV.cs.ch15in;
+            break;
+        case 16:
+            pwm = MainV2.comPort.MAV.cs.ch16in;
+            break;
+        default:
+
+            break;
+    }
+
+    if (MainV2.comPort.MAV.param.ContainsKey("FLTMODE_CH"))
+    {
+        LBL_flightmodepwm.Text = MainV2.comPort.MAV.param["FLTMODE_CH"] + ":" + pwm;
+    }
+    else
+    {
+        LBL_flightmodepwm.Text = MainV2.comPort.MAV.param["MODE_CH"] + ":" + pwm;
+    }
+}
+``` 
+</details>
+
+## 保存模式 （模式设置保存）
+<details>  
+<summary>点击查看代码</summary>  
+
+```C#  
+
+ private void BUT_SaveModes_Click(object sender, EventArgs e)
+ {
+     try
+     {
+         if (MainV2.comPort.MAV.param.ContainsKey("FLTMODE1"))
+         {
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "FLTMODE1", int.Parse(CMB_fmode1.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "FLTMODE2", int.Parse(CMB_fmode2.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "FLTMODE3", int.Parse(CMB_fmode3.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "FLTMODE4", int.Parse(CMB_fmode4.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "FLTMODE5", int.Parse(CMB_fmode5.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "FLTMODE6", int.Parse(CMB_fmode6.SelectedValue.ToString()));
+         }
+         else if (MainV2.comPort.MAV.param.ContainsKey("MODE1"))
+         {
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "MODE1", int.Parse(CMB_fmode1.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "MODE2", int.Parse(CMB_fmode2.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "MODE3", int.Parse(CMB_fmode3.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "MODE4", int.Parse(CMB_fmode4.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "MODE5", int.Parse(CMB_fmode5.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "MODE6", int.Parse(CMB_fmode6.SelectedValue.ToString()));
+         }
+         else if (MainV2.comPort.MAV.param.ContainsKey("COM_FLTMODE1"))
+         {
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "COM_FLTMODE1", int.Parse(CMB_fmode1.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "COM_FLTMODE2", int.Parse(CMB_fmode2.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "COM_FLTMODE3", int.Parse(CMB_fmode3.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "COM_FLTMODE4", int.Parse(CMB_fmode4.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "COM_FLTMODE5", int.Parse(CMB_fmode5.SelectedValue.ToString()));
+             MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "COM_FLTMODE6", int.Parse(CMB_fmode6.SelectedValue.ToString()));
+         }
+
+         if (MainV2.comPort.MAV.cs.firmware == Firmwares.ArduCopter2) // ac2
+         {
+             // simple
+             var value = (float)(CB_simple1.Checked ? (int)SimpleMode.Simple1 : 0) +
+                         (CB_simple2.Checked ? (int)SimpleMode.Simple2 : 0) +
+                         (CB_simple3.Checked ? (int)SimpleMode.Simple3 : 0)
+                         + (CB_simple4.Checked ? (int)SimpleMode.Simple4 : 0) +
+                         (CB_simple5.Checked ? (int)SimpleMode.Simple5 : 0) +
+                         (CB_simple6.Checked ? (int)SimpleMode.Simple6 : 0);
+             if (MainV2.comPort.MAV.param.ContainsKey("SIMPLE"))
+                 MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "SIMPLE", value);
+
+             // supersimple
+             value = (float)(chk_ss1.Checked ? (int)SimpleMode.Simple1 : 0) +
+                     (chk_ss2.Checked ? (int)SimpleMode.Simple2 : 0) +
+                     (chk_ss3.Checked ? (int)SimpleMode.Simple3 : 0)
+                     + (chk_ss4.Checked ? (int)SimpleMode.Simple4 : 0) +
+                     (chk_ss5.Checked ? (int)SimpleMode.Simple5 : 0) +
+                     (chk_ss6.Checked ? (int)SimpleMode.Simple6 : 0);
+             if (MainV2.comPort.MAV.param.ContainsKey("SUPER_SIMPLE"))
+                 MainV2.comPort.setParam((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, "SUPER_SIMPLE", value);
+         }
+     }
+     catch
+     {
+         CustomMessageBox.Show(Strings.ErrorSettingParameter, Strings.ERROR);
+     }
+     BUT_SaveModes.Text = "Complete";
+ }
+
+```  
+</details>      
+
+## 当前模式
+```C#
+ resources.ApplyResources(this.lbl_currentmode, "lbl_currentmode");
+ this.lbl_currentmode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.currentStateBindingSource, "mode", true));
+ this.lbl_currentmode.Name = "lbl_currentmode";
+ // 
+// currentStateBindingSource
+// 
+this.currentStateBindingSource.DataSource = typeof(MissionPlanner.CurrentState);
+```  
+
+## 模式下拉值
+```xml  
+<FLTMODE1>
+  <DisplayName>FlightMode1</DisplayName>
+  <Description>Flight mode for switch position 1 (910 to 1230 and above 2049)</Description>
+  <Values>0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL</Values>
+  <User>Standard</User>
+</FLTMODE1>
+<FLTMODE2>
+  <DisplayName>FlightMode2</DisplayName>
+  <Description>Flight mode for switch position 2 (1231 to 1360)</Description>
+  <Values>0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL</Values>
+  <User>Standard</User>
+</FLTMODE2>
+<FLTMODE3>
+  <DisplayName>FlightMode3</DisplayName>
+  <Description>Flight mode for switch position 3 (1361 to 1490)</Description>
+  <Values>0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL</Values>
+  <User>Standard</User>
+</FLTMODE3>
+<FLTMODE4>
+  <DisplayName>FlightMode4</DisplayName>
+  <Description>Flight mode for switch position 4 (1491 to 1620)</Description>
+  <Values>0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL</Values>
+  <User>Standard</User>
+</FLTMODE4>
+<FLTMODE5>
+  <DisplayName>FlightMode5</DisplayName>
+  <Description>Flight mode for switch position 5 (1621 to 1749)</Description>
+  <Values>0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL</Values>
+  <User>Standard</User>
+</FLTMODE5>
+<FLTMODE6>
+  <DisplayName>FlightMode6</DisplayName>
+  <Description>Flight mode for switch position 6 (1750 to 2049)</Description>
+  <Values>0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL</Values>
+  <User>Standard</User>
+</FLTMODE6>
 ```

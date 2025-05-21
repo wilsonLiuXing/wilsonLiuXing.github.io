@@ -1254,7 +1254,9 @@ if (MainV2.comPort.MAV.param.ContainsKey("FLTMODE_CH") ||
     }
 }
 ``` 
-</details>
+</details>  
+
+![示例图片](https://github.com/wilsonLiuXing/wilsonLiuXing.github.io/blob/main/flmodel.png?raw=true)
 
 ## 保存模式 （模式设置保存）
 <details>  

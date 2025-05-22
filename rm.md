@@ -1379,3 +1379,4 @@ this.currentStateBindingSource.DataSource = typeof(MissionPlanner.CurrentState);
   <User>Standard</User>
 </FLTMODE6>
 ```
+https://github.com/ArduPilot/ardupilot/blob/master/Tools/Frame_params

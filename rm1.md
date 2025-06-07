@@ -187,3 +187,187 @@ if (baudOptions.Count > 0)
     };
 }
 ```
+
+# 基本调参
+<font color="red">MissionPlanner\GCSViews\ConfigurationView\ConfigArduplane.Designer.cs</font>
+
+
+## 舵机 Roll Pid
+```C#
+ // 
+// groupBox8
+// INT_MAX
+this.groupBox8.Controls.Add(this.RLL2SRV_IMAX);
+this.groupBox8.Controls.Add(this.label49);
+// D
+this.groupBox8.Controls.Add(this.RLL2SRV_D);
+this.groupBox8.Controls.Add(this.label50);
+// I
+this.groupBox8.Controls.Add(this.RLL2SRV_I);
+this.groupBox8.Controls.Add(this.label51);
+// P
+this.groupBox8.Controls.Add(this.RLL2SRV_P);
+this.groupBox8.Controls.Add(this.label52);
+resources.ApplyResources(this.groupBox8, "groupBox8");
+this.groupBox8.Name = "groupBox8";
+this.groupBox8.TabStop = false;
+```
+
+## L1 控制 - 转向控制
+```C#
+// 阻尼
+this.groupBox4.Controls.Add(this.NAVL1_DAMPING);
+this.groupBox4.Controls.Add(this.label9);
+// 周期
+this.groupBox4.Controls.Add(this.NAVL1_PERIOD);
+this.groupBox4.Controls.Add(this.label10);
+resources.ApplyResources(this.groupBox4, "groupBox4");
+this.groupBox4.Name = "groupBox4";
+this.groupBox4.TabStop = false;
+```
+
+## TECS
+```C#
+// 最大爬升
+this.groupBox5.Controls.Add(this.TECS_SINK_MAX);
+this.groupBox5.Controls.Add(this.label15);
+// 最小下降
+this.groupBox5.Controls.Add(this.TECS_TIME_CONST);
+this.groupBox5.Controls.Add(this.label14);
+// 最大下降
+this.groupBox5.Controls.Add(this.TECS_PTCH_DAMP);
+this.groupBox5.Controls.Add(this.label13);
+// Pitch抑制
+this.groupBox5.Controls.Add(this.TECS_SINK_MIN);
+this.groupBox5.Controls.Add(this.label11);
+// 时间常数
+this.groupBox5.Controls.Add(this.TECS_CLMB_MAX);
+this.groupBox5.Controls.Add(this.label12);
+resources.ApplyResources(this.groupBox5, "groupBox5");
+this.groupBox5.Name = "groupBox5";
+this.groupBox5.TabStop = false;
+```  
+
+## 舵机Pitch Pid
+```C#
+// INT_MAX
+this.groupBox9.Controls.Add(this.PTCH2SRV_IMAX);
+this.groupBox9.Controls.Add(this.label53);
+// D
+this.groupBox9.Controls.Add(this.PTCH2SRV_D);
+this.groupBox9.Controls.Add(this.label54);
+// I
+this.groupBox9.Controls.Add(this.PTCH2SRV_I);
+this.groupBox9.Controls.Add(this.label55);
+// P
+this.groupBox9.Controls.Add(this.PTCH2SRV_P);
+this.groupBox9.Controls.Add(this.label56);
+resources.ApplyResources(this.groupBox9, "groupBox9");
+this.groupBox9.Name = "groupBox9";
+this.groupBox9.TabStop = false;
+```  
+## 其它混合
+```C#
+// 舵混合
+  this.groupBox16.Controls.Add(this.KFF_PTCH2THR);
+  this.groupBox16.Controls.Add(this.label83);
+  // P 至
+  this.groupBox16.Controls.Add(this.KFF_RDDRMIX);
+  this.groupBox16.Controls.Add(this.label78);
+  resources.ApplyResources(this.groupBox16, "groupBox16");
+  this.groupBox16.Name = "groupBox16";
+  this.groupBox16.TabStop = false;
+```
+
+## 导航角度
+```C#
+// 最小Pitch
+this.groupBox2.Controls.Add(this.LIM_PITCH_MIN);
+this.groupBox2.Controls.Add(this.label39);
+// 最大Pitch
+this.groupBox2.Controls.Add(this.LIM_PITCH_MAX);
+this.groupBox2.Controls.Add(this.label38);
+// 转向最大
+this.groupBox2.Controls.Add(this.LIM_ROLL_CD);
+this.groupBox2.Controls.Add(this.label37);
+resources.ApplyResources(this.groupBox2, "groupBox2");
+this.groupBox2.Name = "groupBox2";
+this.groupBox2.TabStop = false;
+```
+
+## 导航角度
+```C#
+// 最小Pitch
+this.groupBox2.Controls.Add(this.LIM_PITCH_MIN);
+this.groupBox2.Controls.Add(this.label39);
+// 最大Pitch
+this.groupBox2.Controls.Add(this.LIM_PITCH_MAX);
+this.groupBox2.Controls.Add(this.label38);
+// 转向最大
+this.groupBox2.Controls.Add(this.LIM_ROLL_CD);
+this.groupBox2.Controls.Add(this.label37);
+resources.ApplyResources(this.groupBox2, "groupBox2");
+this.groupBox2.Name = "groupBox2";
+this.groupBox2.TabStop = false;
+```  
+
+## 舵机 Yaw  
+
+```C#
+ // 积分器最大
+ this.groupBox10.Controls.Add(this.YAW2SRV_IMAX);
+ this.groupBox10.Controls.Add(this.label57);
+ // 抑制
+ this.groupBox10.Controls.Add(this.YAW2SRV_DAMP);
+ this.groupBox10.Controls.Add(this.label58);
+ // 积分
+ this.groupBox10.Controls.Add(this.YAW2SRV_INT);
+ this.groupBox10.Controls.Add(this.label59);
+ // yaw 至 roll
+ this.groupBox10.Controls.Add(this.YAW2SRV_RLL);
+ this.groupBox10.Controls.Add(this.label60);
+ resources.ApplyResources(this.groupBox10, "groupBox10");
+ this.groupBox10.Name = "groupBox10";
+ this.groupBox10.TabStop = false;
+```
+
+## 油门 0-100%  
+
+```C#
+// 旋转速度
+ this.groupBox3.Controls.Add(this.THR_SLEWRATE);
+ this.groupBox3.Controls.Add(this.label5);
+ // 最大
+ this.groupBox3.Controls.Add(this.THR_MAX);
+ this.groupBox3.Controls.Add(this.label6);
+ // 最小
+ this.groupBox3.Controls.Add(this.THR_MIN);
+ this.groupBox3.Controls.Add(this.label7);
+ // 巡航
+ this.groupBox3.Controls.Add(this.TRIM_THROTTLE);
+ this.groupBox3.Controls.Add(this.label8);
+ resources.ApplyResources(this.groupBox3, "groupBox3");
+ this.groupBox3.Name = "groupBox3";
+ this.groupBox3.TabStop = false;
+```
+
+## 空速 m/s
+
+```C#
+// 比例
+this.groupBox1.Controls.Add(this.ARSPD_RATIO);
+this.groupBox1.Controls.Add(this.label1);
+// FBW 最大
+this.groupBox1.Controls.Add(this.ARSPD_FBW_MAX);
+this.groupBox1.Controls.Add(this.label2);
+// FBW 最小
+this.groupBox1.Controls.Add(this.ARSPD_FBW_MIN);
+this.groupBox1.Controls.Add(this.label3);
+// 巡航
+this.groupBox1.Controls.Add(this.TRIM_ARSPD_CM);
+this.groupBox1.Controls.Add(this.label4);
+resources.ApplyResources(this.groupBox1, "groupBox1");
+this.groupBox1.Name = "groupBox1";
+this.groupBox1.TabStop = false;
+ this.groupBox3.TabStop = false;
+```

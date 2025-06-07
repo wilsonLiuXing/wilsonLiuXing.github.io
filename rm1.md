@@ -212,6 +212,13 @@ resources.ApplyResources(this.groupBox8, "groupBox8");
 this.groupBox8.Name = "groupBox8";
 this.groupBox8.TabStop = false;
 ```
+### 参数
+```C#
+RLL2SRV_IMAX.setup(0, 0, 100, 0, new String[] {"RLL2SRV_IMAX","RLL_RATE_IMAX"}, MainV2.comPort.MAV.param);
+RLL2SRV_D.setup(0, 0, 1, 0, new String[] {"RLL2SRV_D","RLL_RATE_D"}, MainV2.comPort.MAV.param);
+RLL2SRV_I.setup(0, 0, 1, 0, new String[] {"RLL2SRV_I","RLL_RATE_I"}, MainV2.comPort.MAV.param);
+RLL2SRV_P.setup(0, 0, 1, 0, new String[] {"RLL2SRV_P","RLL_RATE_P"}, MainV2.comPort.MAV.param);
+```
 
 ## L1 控制 - 转向控制
 ```C#
@@ -224,6 +231,11 @@ this.groupBox4.Controls.Add(this.label10);
 resources.ApplyResources(this.groupBox4, "groupBox4");
 this.groupBox4.Name = "groupBox4";
 this.groupBox4.TabStop = false;
+```
+### 参数
+```C#
+NAVL1_DAMPING.setup(0, 0, 1, 0, "NAVL1_DAMPING", MainV2.comPort.MAV.param);
+NAVL1_PERIOD.setup(0, 0, 1, 0, "NAVL1_PERIOD", MainV2.comPort.MAV.param);
 ```
 
 ## TECS
@@ -247,6 +259,14 @@ resources.ApplyResources(this.groupBox5, "groupBox5");
 this.groupBox5.Name = "groupBox5";
 this.groupBox5.TabStop = false;
 ```  
+### 参数
+```C#
+TECS_SINK_MAX.setup(0, 0, 1, 0, "TECS_SINK_MAX", MainV2.comPort.MAV.param);
+TECS_TIME_CONST.setup(0, 0, 1, 0, "TECS_TIME_CONST", MainV2.comPort.MAV.param);
+TECS_PTCH_DAMP.setup(0, 0, 1, 0, "TECS_PTCH_DAMP", MainV2.comPort.MAV.param);
+TECS_SINK_MIN.setup(0, 0, 1, 0, "TECS_SINK_MIN", MainV2.comPort.MAV.param);
+TECS_CLMB_MAX.setup(0, 0, 1, 0, "TECS_CLMB_MAX", MainV2.comPort.MAV.param);
+```
 
 ## 舵机Pitch Pid
 ```C#
@@ -266,6 +286,13 @@ resources.ApplyResources(this.groupBox9, "groupBox9");
 this.groupBox9.Name = "groupBox9";
 this.groupBox9.TabStop = false;
 ```  
+### 参数
+```C#
+PTCH2SRV_IMAX.setup(0, 0, 100, 0, new String[] {"PTCH2SRV_IMAX","PTCH_RATE_IMAX"}, MainV2.comPort.MAV.param);
+PTCH2SRV_D.setup(0, 0, 1, 0, new String[] {"PTCH2SRV_D","PTCH_RATE_D"}, MainV2.comPort.MAV.param);
+PTCH2SRV_I.setup(0, 0, 1, 0, new String[] {"PTCH2SRV_I","PTCH_RATE_I"}, MainV2.comPort.MAV.param);
+PTCH2SRV_P.setup(0, 0, 1, 0, new String[] {"PTCH2SRV_P","PTCH_RATE_P"}, MainV2.comPort.MAV.param);
+```
 ## 其它混合
 ```C#
 // 舵混合
@@ -278,7 +305,11 @@ this.groupBox9.TabStop = false;
   this.groupBox16.Name = "groupBox16";
   this.groupBox16.TabStop = false;
 ```
-
+### 参数
+```C#
+KFF_PTCH2THR.setup(0, 0, 1, 0, new string[] { "KFF_THR2PTCH","KFF_PTCH2THR"}, MainV2.comPort.MAV.param);
+KFF_RDDRMIX.setup(0, 0, 1, 0, "KFF_RDDRMIX", MainV2.comPort.MAV.param);
+```
 ## 导航角度
 ```C#
 // 最小Pitch
@@ -294,23 +325,12 @@ resources.ApplyResources(this.groupBox2, "groupBox2");
 this.groupBox2.Name = "groupBox2";
 this.groupBox2.TabStop = false;
 ```
-
-## 导航角度
+### 参数
 ```C#
-// 最小Pitch
-this.groupBox2.Controls.Add(this.LIM_PITCH_MIN);
-this.groupBox2.Controls.Add(this.label39);
-// 最大Pitch
-this.groupBox2.Controls.Add(this.LIM_PITCH_MAX);
-this.groupBox2.Controls.Add(this.label38);
-// 转向最大
-this.groupBox2.Controls.Add(this.LIM_ROLL_CD);
-this.groupBox2.Controls.Add(this.label37);
-resources.ApplyResources(this.groupBox2, "groupBox2");
-this.groupBox2.Name = "groupBox2";
-this.groupBox2.TabStop = false;
-```  
-
+ LIM_PITCH_MIN.setup(0, 0, 1, 1, "PTCH_LIM_MIN_DEG", MainV2.comPort.MAV.param);
+ LIM_PITCH_MAX.setup(0, 0, 1, 1, "PTCH_LIM_MAX_DEG", MainV2.comPort.MAV.param);
+ LIM_ROLL_CD.setup(0, 0, 1, 1, "ROLL_LIMIT_DEG", MainV2.comPort.MAV.param);
+```
 ## 舵机 Yaw  
 
 ```C#
@@ -330,7 +350,13 @@ this.groupBox2.TabStop = false;
  this.groupBox10.Name = "groupBox10";
  this.groupBox10.TabStop = false;
 ```
-
+### 参数
+```C#
+YAW2SRV_IMAX.setup(0, 0, 100, 0, "YAW2SRV_IMAX", MainV2.comPort.MAV.param);
+YAW2SRV_DAMP.setup(0, 0, 1, 0, "YAW2SRV_DAMP", MainV2.comPort.MAV.param);
+YAW2SRV_INT.setup(0, 0, 1, 0, "YAW2SRV_INT", MainV2.comPort.MAV.param);
+YAW2SRV_RLL.setup(0, 0, 1, 0, "YAW2SRV_RLL", MainV2.comPort.MAV.param);
+```
 ## 油门 0-100%  
 
 ```C#
@@ -350,7 +376,13 @@ this.groupBox2.TabStop = false;
  this.groupBox3.Name = "groupBox3";
  this.groupBox3.TabStop = false;
 ```
-
+### 参数
+```C#
+THR_SLEWRATE.setup(0, 0, 1, 0, "THR_SLEWRATE", MainV2.comPort.MAV.param);
+THR_MAX.setup(0, 0, 1, 0, "THR_MAX", MainV2.comPort.MAV.param);
+THR_MIN.setup(0, 0, 1, 0, "THR_MIN", MainV2.comPort.MAV.param);
+TRIM_THROTTLE.setup(0, 0, 1, 0, "TRIM_THROTTLE", MainV2.comPort.MAV.param);
+```
 ## 空速 m/s
 
 ```C#
@@ -370,4 +402,11 @@ resources.ApplyResources(this.groupBox1, "groupBox1");
 this.groupBox1.Name = "groupBox1";
 this.groupBox1.TabStop = false;
  this.groupBox3.TabStop = false;
+```
+### 参数
+```C#
+ARSPD_RATIO.setup(0, 2.5f, 1, 0.005f, "ARSPD_RATIO", MainV2.comPort.MAV.param);
+ARSPD_FBW_MAX.setup(0, 0, 1, 1, new string[] { "AIRSPEED_MAX", "ARSPD_FBW_MAX" }, MainV2.comPort.MAV.param);
+ARSPD_FBW_MIN.setup(0, 0, 1, 1, new string[] { "AIRSPEED_MIN", "ARSPD_FBW_MIN" }, MainV2.comPort.MAV.param);
+TRIM_ARSPD_CM.setup(0, 50, 1, 1, "AIRSPEED_CRUISE", MainV2.comPort.MAV.param);
 ```

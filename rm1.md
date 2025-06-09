@@ -240,19 +240,19 @@ NAVL1_PERIOD.setup(0, 0, 1, 0, "NAVL1_PERIOD", MainV2.comPort.MAV.param);
 
 ## TECS
 ```C#
-// 时间常数
+// 最大下降(m/s)
 this.groupBox5.Controls.Add(this.TECS_SINK_MAX);
 this.groupBox5.Controls.Add(this.label15);
-// Pitch抑制
+// 时间常数
 this.groupBox5.Controls.Add(this.TECS_TIME_CONST);
 this.groupBox5.Controls.Add(this.label14);
-// 最大下降
+// Pitch抑制
 this.groupBox5.Controls.Add(this.TECS_PTCH_DAMP);
 this.groupBox5.Controls.Add(this.label13);
-// 最小下降
+// 最小下降(m/s)
 this.groupBox5.Controls.Add(this.TECS_SINK_MIN);
 this.groupBox5.Controls.Add(this.label11);
-// 最大爬升
+// 最大爬升(m/s)
 this.groupBox5.Controls.Add(this.TECS_CLMB_MAX);
 this.groupBox5.Controls.Add(this.label12);
 resources.ApplyResources(this.groupBox5, "groupBox5");
